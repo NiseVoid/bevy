@@ -1,7 +1,9 @@
+#[cfg(feature = "multi-threaded")]
 mod multi_threaded;
 mod simple;
 mod single_threaded;
 
+#[cfg(feature = "multi-threaded")]
 pub use self::multi_threaded::{MainThreadExecutor, MultiThreadedExecutor};
 pub use self::simple::SimpleExecutor;
 pub use self::single_threaded::SingleThreadedExecutor;
@@ -44,6 +46,7 @@ pub enum ExecutorKind {
     /// immediately after running each system.
     Simple,
     /// Runs the schedule using a thread pool. Non-conflicting systems can run in parallel.
+    #[cfg(feature = "multi-threaded")]
     #[cfg_attr(all(not(target_arch = "wasm32"), feature = "multi-threaded"), default)]
     MultiThreaded,
 }
@@ -62,8 +65,10 @@ pub struct SystemSchedule {
     /// Indexed by system node id.
     pub(super) system_conditions: Vec<Vec<BoxedCondition>>,
     /// Indexed by system node id.
+    #[allow(dead_code)]
     pub(super) system_dependencies: Vec<usize>,
     /// Indexed by system node id.
+    #[allow(dead_code)]
     pub(super) system_dependents: Vec<Vec<usize>>,
     /// Indexed by system node id.
     pub(super) sets_with_conditions_of_systems: Vec<FixedBitSet>,
